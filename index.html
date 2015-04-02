@@ -1,0 +1,66 @@
+<html lang="en">
+<head>
+<title>PeerJs Live Demo</title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Language" content="en-us">
+<link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.peerjs.com/0/peer.js"></script>
+<script type="text/javascript" src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+<script>
+	var conn;
+	var peer = new Peer({key: 'wghnt0pwlgsw0zfr'});
+	peer.on('open',function (id) {
+		$('#pid').text(id);
+	});
+
+	peer.on('connection',connect);
+	function connect(c) {
+		conn = c;
+		$('#rid').val(conn.peer);
+		$('#rid').prop('disabled',true);		
+		conn.on('data',function(data) {
+			$('#inputText').val($('#inputText').val()+data);
+		});
+	}
+
+$(document).ready(function(){
+	$('connect').click(function() {
+	var c = peer.connect($('#rid').val());
+	c.on('open',function() {
+		connect(c);
+		});
+	});
+	
+	$('#inputText').keypress(function(e){
+		var ev = e || window.event;
+		var asciiKey = ev.keyCode || ev.which;
+		text = String.fromCharCode(asciiKey); 
+		conn.send(text);
+	});
+
+});
+
+
+</script>
+
+<h2 style="margin-left:30%;"> Live Edit With WebRTC </h2>
+Your PeerJS id is : <span id="pid"></span> <br><br>
+Connect to peer: <input type="text" id="rid" placeholder="someone else's id">
+				 <input type="button" value="connect" id="connect" >
+				 <input type="button" value="disconnect" id="disconnect">
+				 <br><br>
+
+<textarea id="inputText" rows="30" style="width:45%; margin-left:20%;"> 
+
+</textarea> 
+
+
+
+</body>
+
+</html>
